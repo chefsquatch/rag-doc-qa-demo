@@ -1,0 +1,18 @@
+# Secrets — the real key never gets committed
+.env
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# ChromaDB persisted vectors (rebuilt by ingest.py)
+chroma_db/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
