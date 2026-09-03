@@ -68,7 +68,9 @@ class AskRequest(BaseModel):
     question: str
 
 
-@app.get("/health")
+# GET and HEAD: uptime monitors ping with HEAD by default; answering it keeps
+# the free instance warm without false "down" alerts.
+@app.api_route("/health", methods=["GET", "HEAD"])
 def health() -> dict:
     try:
         count = get_collection().count()
