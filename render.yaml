@@ -5,7 +5,10 @@ services:
     name: rag-doc-qa-demo
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    # Ingest at BUILD time: downloads the embedder and builds the vector store
+    # before the server starts, so the first boot binds its port immediately and
+    # Render's health check never times out waiting on the model download.
+    buildCommand: pip install -r requirements.txt && python -m app.ingest
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: ANTHROPIC_API_KEY
