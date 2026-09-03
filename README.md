@@ -10,7 +10,8 @@ model's general knowledge when retrieval finds nothing — the exact failure mod
 that makes RAG untrustworthy. This one refuses, and the refusal is proven, not
 assumed.
 
-**Live demo:** _(add your deployed URL here)_
+**Live demo:** https://rag-doc-qa-demo.onrender.com
+_(free tier — the first load after ~15 min idle cold-starts in ~50s, then it's snappy)_
 
 ---
 
