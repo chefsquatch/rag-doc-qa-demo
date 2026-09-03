@@ -13,6 +13,8 @@ assumed.
 **Live demo:** https://rag-doc-qa-demo.onrender.com
 _(free tier — the first load after ~15 min idle cold-starts in ~50s, then it's snappy)_
 
+**Write-up:** [CASE_STUDY.md](CASE_STUDY.md) — what makes it different (grounded-or-honest) and how each claim was proven.
+
 ---
 
 ## Stack, and why
