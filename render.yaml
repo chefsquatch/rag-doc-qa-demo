@@ -8,8 +8,16 @@ services:
     # Ingest at BUILD time: downloads the embedder and builds the vector store
     # before the server starts, so the first boot binds its port immediately and
     # Render's health check never times out waiting on the model download.
-    buildCommand: pip install -r requirements.txt && python -m app.ingest
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    #
+    # HOME is redirected INTO the project dir (only for the Python processes, so
+    # Render's own build tooling keeps its default HOME). ChromaDB's ONNX embedder
+    # downloads to $HOME/.cache/chroma; the default $HOME (/opt/render) is wiped on
+    # a free-tier cold start, so the model vanished and /ask 502'd. Pointing HOME at
+    # /opt/render/project/src (the deploy artifact, which DOES persist across cold
+    # starts like chroma_db/ does) makes the model ship in the build and be present
+    # on every boot -- no runtime download, no cold-start failure.
+    buildCommand: pip install -r requirements.txt && HOME=/opt/render/project/src/.render-home python -m app.ingest
+    startCommand: HOME=/opt/render/project/src/.render-home uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false

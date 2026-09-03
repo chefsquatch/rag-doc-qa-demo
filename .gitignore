@@ -11,6 +11,9 @@ __pycache__/
 # ChromaDB persisted vectors (rebuilt by ingest.py)
 chroma_db/
 
+# Redirected HOME for the ONNX embedder cache on Render (built into the artifact)
+.render-home/
+
 # OS / editor
 .DS_Store
 Thumbs.db
