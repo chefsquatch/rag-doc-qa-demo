@@ -12,6 +12,7 @@ stack trace, never a silent hang.
 
 from __future__ import annotations
 
+import threading
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -35,6 +36,17 @@ STATIC_DIR = config.ROOT_DIR / "static"
 app = FastAPI(title="RAG Document Q&A Demo")
 
 
+def _warm_embedder() -> None:
+    """Load the ONNX embedding model into memory once, so the first real question
+    isn't stuck ~15-20s waiting for it. Runs on a background thread so it never
+    delays the server binding its port."""
+    try:
+        get_collection().query(query_texts=["warmup"], n_results=1)
+        print("[startup] Embedder warmed.")
+    except Exception as exc:
+        print(f"[startup] Warm-up skipped: {exc}")
+
+
 @app.on_event("startup")
 def ensure_ingested() -> None:
     """Auto-ingest docs/ on first boot so a fresh deploy just works."""
@@ -47,6 +59,9 @@ def ensure_ingested() -> None:
             print(f"[startup] Store already has {collection.count()} chunks.")
     except Exception as exc:  # never crash the server on startup ingest trouble
         print(f"[startup] Ingest skipped: {exc}")
+
+    # Pre-load the embedder in the background so the first question is fast.
+    threading.Thread(target=_warm_embedder, daemon=True).start()
 
 
 class AskRequest(BaseModel):
